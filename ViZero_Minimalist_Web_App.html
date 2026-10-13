@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViZero — $0/month. Forever.</title>
+    <!-- Web App Manifest for PWA Support -->
+    <link rel="manifest" href="data:application/json,{
+        &quot;name&quot;: &quot;ViZero&quot;,
+        &quot;short_name&quot;: &quot;ViZero&quot;,
+        &quot;start_url&quot;: &quot;.&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;%23040405&quot;,
+        &quot;theme_color&quot;: &quot;%23040405&quot;
+    }">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#040405">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: {
+                            850: '#121215',
+                            900: '#09090b',
+                            950: '#040405',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-zinc-800 selection:text-white px-6">
+
+    <!-- Header Navigation -->
+    <header class="max-w-2xl mx-auto w-full pt-8 pb-4 flex justify-between items-center">
+        <div class="font-mono text-sm tracking-widest text-zinc-500 uppercase font-bold">
+            [ V0 ]
+        </div>
+        
+        <!-- PWA Status Badge (Toggles dynamically when launched in PWA standalone mode) -->
+        <div id="pwaStatusContainer">
+            <div id="webBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                No Subscriptions. No Cards.
+            </div>
+            <div id="pwaActiveBadge" class="hidden inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-xs text-emerald-400 font-semibold tracking-wide">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                (PWA active)
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-2xl mx-auto w-full my-auto py-12 space-y-10 text-center sm:text-left">
+        
+        <div class="space-y-4">
+            <h1 class="text-6xl sm:text-7xl font-black tracking-tight text-white">
+                ViZero
+            </h1>
+            <p class="text-2xl sm:text-3xl font-light text-zinc-400 tracking-tight">
+                $0/month. Forever.
+            </p>
+        </div>
+
+        <!-- Mission Statement -->
+        <p class="text-base sm:text-lg text-zinc-400 leading-relaxed font-normal">
+            Software shouldn't feel like monthly rent. ViZero is built to reclaim the freedom of the open web—zero hidden fees, zero card requirements, and zero trial traps. Pure tools for human beings.
+        </p>
+
+        <!-- Dynamic Action Buttons -->
+        <div class="pt-2 flex flex-col sm:flex-row items-center gap-3">
+            
+            <!-- Launch Button (Primary button when PWA is active or when user clicks Run Live) -->
+            <button id="launchBtn" onclick="launchApp()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg">
+                <i data-lucide="play" class="w-4 h-4 fill-zinc-950"></i>
+                <span id="launchBtnText">Run Live</span>
+            </button>
+
+            <!-- Add to Home Screen Button -->
+            <button id="installBtn" onclick="toggleGuide()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-850 text-zinc-200 font-semibold text-sm border border-zinc-800 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Add to Home Screen
+            </button>
+
+            <!-- Learn More Button (Smoothly scrolls to About Section) -->
+            <button onclick="scrollToAbout()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-transparent hover:bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-sm border border-transparent hover:border-zinc-800 transition-all flex items-center justify-center gap-2">
+                Learn More
+                <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Hidden PWA Step-by-Step Installation Instructions -->
+        <div id="guideDrawer" class="hidden p-6 rounded-2xl bg-zinc-900 border border-zinc-800 text-left space-y-4 transition-all">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="text-sm font-semibold text-zinc-200 flex items-center gap-2">
+                    <i data-lucide="smartphone" class="w-4 h-4 text-zinc-400"></i>
+                    PWA Direct Installation
+                </h3>
+                <button onclick="toggleGuide()" class="text-zinc-500 hover:text-zinc-300 text-xs">Close</button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-zinc-400">
+                <div class="space-y-1.5">
+                    <span class="font-medium text-zinc-200">iOS (Safari)</span>
+                    <p>1. Tap the <strong class="text-zinc-300">Share</strong> icon (square with arrow).</p>
+                    <p>2. Select <strong class="text-zinc-300">Add to Home Screen</strong>.</p>
+                </div>
+                <div class="space-y-1.5">
+                    <span class="font-medium text-zinc-200">Android (Chrome)</span>
+                    <p>1. Tap the <strong class="text-zinc-300">3 Dots</strong> menu in the corner.</p>
+                    <p>2. Select <strong class="text-zinc-300">Install App / Add to Home</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Workspace View (Displayed when user clicks Launch or Run Live) -->
+        <div id="appContainer" class="hidden p-8 rounded-2xl bg-zinc-900/90 border border-zinc-800 text-left space-y-6 transition-all shadow-2xl">
+            <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                    <span class="text-sm font-bold text-white tracking-wide">ViZero Workspace</span>
+                </div>
+                <button onclick="closeApp()" class="text-xs text-zinc-500 hover:text-zinc-300 px-2 py-1 rounded bg-zinc-800">Exit App</button>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-sm text-zinc-300">
+                    Welcome to <strong class="text-white">ViZero</strong>. You are running in a 100% serverless, zero-subscription environment.
+                </p>
+                <div class="p-4 rounded-xl bg-zinc-950 border border-zinc-850 text-xs font-mono text-zinc-400 space-y-1">
+                    <p class="text-emerald-400">> Mode: Clean PWA Execution</p>
+                    <p>> Monthly Cost: $0.00</p>
+                    <p>> Cards Required: None</p>
+                    <p>> Status: Ready for development</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer & About Section -->
+    <footer id="about" class="max-w-2xl mx-auto w-full py-12 border-t border-zinc-900 text-xs text-zinc-500 space-y-6">
+        
+        <div id="aboutContent" class="space-y-3 hidden sm:block">
+            <h4 class="text-zinc-300 font-semibold text-sm">About ViZero</h4>
+            <p class="text-zinc-400 leading-relaxed">
+                ViZero was founded on a simple principle: daily digital utilities should belong to the people using them, not locked behind weekly or monthly paywalls. Built as a Progressive Web App (PWA), it runs locally on your device without subscription fees or server costs.
+            </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-zinc-900/50">
+            <div>
+                © ViZero Project • Free & Open Access
+            </div>
+            <div class="flex items-center gap-6">
+                <button onclick="scrollToAbout()" class="hover:text-zinc-300 transition-colors">Manifesto</button>
+                <span class="text-zinc-800">•</span>
+                <span class="text-zinc-600">$0/mo</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // 1. Detect if page is running inside an installed PWA (Standalone Mode)
+        function checkPWAStatus() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                              || window.navigator.standalone 
+                              || document.referrer.includes('android-app://');
+
+            const webBadge = document.getElementById('webBadge');
+            const pwaActiveBadge = document.getElementById('pwaActiveBadge');
+            const launchBtnText = document.getElementById('launchBtnText');
+
+            if (isStandalone) {
+                // Display "(PWA active)" badge
+                webBadge.classList.add('hidden');
+                pwaActiveBadge.classList.remove('hidden');
+
+                // Update primary button text to "Launch"
+                launchBtnText.textContent = "Launch";
+            }
+        }
+
+        // 2. Toggle Installation Guide Drawer
+        function toggleGuide() {
+            const drawer = document.getElementById('guideDrawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // 3. Scroll to Learn More / About section
+        function scrollToAbout() {
+            const aboutSection = document.getElementById('about');
+            const aboutContent = document.getElementById('aboutContent');
+            
+            // Ensure content is visible on mobile
+            aboutContent.classList.remove('hidden');
+            aboutSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 4. Launch / Run Live Experience
+        function launchApp() {
+            const appContainer = document.getElementById('appContainer');
+            appContainer.classList.remove('hidden');
+            appContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeApp() {
+            const appContainer = document.getElementById('appContainer');
+            appContainer.classList.add('hidden');
+        }
+
+        // Run detection on load
+        window.addEventListener('DOMContentLoaded', checkPWAStatus);
+    </script>
+</body>
+</html>
